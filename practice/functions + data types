@@ -1,6 +1,4 @@
-``` Oracle SQL
-
--- Using advanced functions and data types
+--Using advanced functions and data types
 
 SELECT
     sysdate,
