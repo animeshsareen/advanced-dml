@@ -1,0 +1,225 @@
+``` Oracle SQL
+
+-- Using advanced functions and data types
+
+SELECT
+    sysdate,
+    rtrim(to_char(sysdate, 'DAY'))
+    || ', '
+    || ltrim(to_char(sysdate, 'MONTH'))    AS day_month,
+    to_char(sysdate, 'MM/DD/YY - ')
+    || 'hour:'
+    || to_char(sysdate, 'HH')              AS date_with_hours,
+    round(TO_DATE('31-DEC-22') - sysdate,
+          0)                               AS days_til_end_of_year,
+    lower(to_char(sysdate, 'mon dy yyyy')) AS lowercase,
+    to_char(100000, '$999,999')            AS my_ideal_starting_salary
+FROM
+    dual;
+
+-- using NVL2  as boolean logic for column parsing
+SELECT
+    s.uteid,
+    nvl2(msl.major_id, first_name
+                       || ' '
+                       || last_name
+                       || ' '
+                       || 'has declared a major.', first_name
+                                                   || ' '
+                                                   || last_name
+                                                   || ' '
+                                                   || 'has not declared a major.') AS "Student Information",
+    nvl2(date_declared,
+         'Date declared:'
+         || ' '
+         || to_char(date_declared, 'Mon-dd-yyyy'),
+         'Date declared:')          AS "Date Declared"
+FROM
+    student               s
+    FULL OUTER JOIN major_student_linking msl ON s.uteid = msl.uteid
+ORDER BY
+    s.uteid ASC;
+    
+    -- Using DML to asemble dynamic query outputs
+SELECT DISTINCT
+    upper(substr(first_name, 1, 1))
+    || '. '
+    || last_name AS teacher_name,
+    unique_number,
+    seat_limit
+FROM
+         teacher t
+    JOIN section s ON t.uteid = s.instructor_uteid
+WHERE
+        section_mode = 'F'
+    AND seat_limit > 40
+order by 1;
+
+--Unique constraint + DML activity
+SELECT
+    uteid,
+    first_name
+    || ' '
+    || last_name AS "Name",
+    international_flag,
+    CASE
+        WHEN international_flag = 'Y' THEN
+            to_char(46498, '$99,999')
+        ELSE
+            to_char(13570, '$99,999')
+            || ' to '
+            || TRIM(to_char(46498, '$99,999'))
+    END          AS "Tuition"
+FROM
+    student
+ORDER BY
+    3 DESC,
+    1 ASC;
+
+--5.
+
+SELECT
+    s.uteid            AS "UT ID",
+    major_id,
+    length(first_name) AS first_name_length,
+    round(TO_NUMBER(sysdate - date_declared),
+          0)           AS days_since_major_declared
+FROM
+         student s
+    INNER JOIN major_student_linking msl ON s.uteid = msl.uteid
+WHERE
+    classification IN ( '3', '4' )
+    AND TO_NUMBER(sysdate - date_declared) > 50
+ORDER BY
+    4 ASC;
+    
+--More string manipulation, but this time with instr()
+--It's  similar to substr () but with a few strategic differences
+
+SELECT
+    uteid,
+    last_name,
+    email,
+    substr(email,
+           1,
+           instr(email, '@') - 1) AS emailname,
+    substr(email,
+           instr(email, '@') + 1,
+           length(email))         AS emaildomain
+FROM
+    student
+ORDER BY
+    5 ASC;
+    
+
+--Manipulating long strings with substr()
+SELECT
+    first_name
+    || ' '
+    || last_name   AS student_name,
+    major_code,
+    date_declared,
+    substr(phone, 1, 3)
+    || '-***-****' AS redacted_phone_number
+FROM
+         student s
+    JOIN major_student_linking msl ON s.uteid = msl.uteid
+    JOIN major                 m ON msl.major_id = m.major_id
+WHERE
+    date_declared > '01-Jan-22'
+ORDER BY
+    2,
+    3;
+
+
+--Practice with CASE WHEN
+SELECT
+    CASE
+        WHEN cgpa >= 3.9 THEN
+            '1st Class Honor'
+        WHEN cgpa >= 3.7
+             AND cgpa < 3.9 THEN
+            '2nd Class Honor'
+        WHEN cgpa >= 3.5
+             AND cgpa < 3.7 THEN
+            '3rd Class Honor'
+        ELSE
+            'On track to graduate'
+    END AS "Honor Level",
+    first_name,
+    last_name,
+    email
+FROM
+    student
+ORDER BY
+    1,
+    3;
+
+
+SELECT
+    first_name,
+    last_name,
+    classification,
+    email,
+    cgpa,
+    DENSE_RANK()
+    OVER(
+        ORDER BY
+            cgpa DESC
+    ) AS student_rank
+FROM
+    student
+WHERE
+    classification = '4'
+;
+
+--This final query was the most challenging by far.
+
+--Update the previous query by making it in-line join subquery - meaning go select from the query itself.  
+
+--Then, add in a row filter to the outer query to only pull rownum<=5 and see if the rownum filter 
+--works as you would want it to.
+SELECT
+    *
+FROM
+    (
+    SELECT
+        first_name,
+        last_name,
+        classification,
+        email,
+        cgpa,
+        DENSE_RANK()
+        OVER(
+            ORDER BY
+                cgpa DESC
+        ) AS student_rank
+    FROM
+        student
+    WHERE
+        classification = '4'
+        )
+where rownum <=5;
+
+
+SELECT
+    *
+FROM
+    (
+    SELECT
+        first_name,
+        last_name,
+        classification,
+        email,
+        cgpa,
+        DENSE_RANK()
+        OVER(
+            ORDER BY
+                cgpa DESC
+        ) AS student_rank
+    FROM
+        student
+    WHERE
+        classification = '4'
+        )
+where student_rank <= 3; 
