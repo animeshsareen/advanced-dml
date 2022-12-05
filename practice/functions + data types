@@ -15,7 +15,7 @@ SELECT
 FROM
     dual;
 
--- using NVL2  as boolean logic for column parsing
+-- using NVL2 for boolean logic and column parsing
 SELECT
     s.uteid,
     nvl2(msl.major_id, first_name
