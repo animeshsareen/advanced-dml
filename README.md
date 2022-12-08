@@ -2,10 +2,9 @@
 #subquery-practice
 ## A collection of SQL scripts using advanced DML syntax
 
-Run [this DDL script](https://github.com/animeshsareen/registration-sql/files/10147123/ddl.script.txt) to practice + test your own queries.
+Run [this DDL script](https://github.com/animeshsareen/registration-sql/files/10147123/ddl.script.txt) to practice + test your own queries. You can see how we arrived at that relational database design over in [this](https://github.com/animeshsareen/registration-database) repo.
 
-- Don't forget that my scripts were written in Oracle
-- it's likely not the same as your RDBMS.
+- Don't forget that my scripts were written in Oracle, so they may not be the same as yours.
 
 In that case, check out [this website](http://www.sqlines.com/online) to convert between any two query languages.
 ___
