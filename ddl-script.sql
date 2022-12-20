@@ -1,4 +1,8 @@
--- This PL/SQL block will drop all user-objects in your Oracle environment (to avoid duplicate naming)
+/* NOTE!!! 
+
+This PL/SQL block will drop all user-objects in your Oracle environment (to avoid duplicate naming)
+
+*/
 
 BEGIN
   --Deletes all user created sequences
