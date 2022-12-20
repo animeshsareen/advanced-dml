@@ -1,5 +1,4 @@
 # advanced-dml
-#subquery-practice
 ## A collection of SQL scripts using advanced DML syntax
 
 Run [this DDL script](https://github.com/animeshsareen/registration-sql/files/10147123/ddl.script.txt) to practice + test your own queries. You can see how we arrived at that relational database design over in [this](https://github.com/animeshsareen/registration-database) repo.
